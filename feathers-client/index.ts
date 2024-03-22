@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 
 const IS_BROWSER = typeof window !== 'undefined';
 const IS_LOCAL_STORAGE_AVAILABLE = typeof localStorage !== 'undefined';
-const BASE_URL = process.env.BASE_URL as string;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL as string;
 
 class CustomAuthenticationClient extends AuthenticationClient {
 	handleError(error: any, type: string) {

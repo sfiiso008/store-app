@@ -1,4 +1,4 @@
-const BaseUrl = process.env.BASE_URL;
+const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const FAKE_STORE_API = 'https://api.escuelajs.co';
 
 const IS_BROWSER = typeof window !== 'undefined';

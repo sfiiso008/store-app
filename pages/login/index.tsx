@@ -114,15 +114,24 @@ const Login = () => {
 							/>
 						)}
 					/>
-					<Collapse in={error != null} sx={{ width: 300 }}>
-						<Alert severity='error'>{error}</Alert>
+
+					<Collapse in={error != null} sx={{ width: '100%' }}>
+						<Alert sx={{ width: '100%' }} severity='error'>
+							{error}
+						</Alert>
 					</Collapse>
 					<Stack direction='row' spacing={2}>
 						<Button
 							size='large'
 							variant='contained'
 							sx={{
-								width: 180,
+								width: {
+									lg: 180,
+									xs: 140,
+									sm: 180,
+									md: 180,
+									xl: 180,
+								},
 							}}
 							type='submit'
 						>
@@ -132,7 +141,7 @@ const Login = () => {
 							size='large'
 							variant='outlined'
 							sx={{
-								width: 180,
+								width: { lg: 180, xs: 140, sm: 180 },
 							}}
 							href='/signup'
 						>

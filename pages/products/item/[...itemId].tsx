@@ -5,7 +5,13 @@ import { useShallow } from 'zustand/react/shallow';
 // @store
 import { useStore } from '@/store/session';
 // @mui
-import { Button, IconButton, Stack, Typography } from '@mui/material';
+import {
+	Button,
+	IconButton,
+	Stack,
+	Typography,
+	useMediaQuery,
+} from '@mui/material';
 // @mui-icons
 import { Favorite } from '@mui/icons-material';
 // @api
@@ -28,6 +34,8 @@ interface IProduct {
 }
 
 const SelectedItem = () => {
+	const isDesktop = useMediaQuery('(min-width:600px)');
+
 	const {
 		isAuthenticated,
 		user,
@@ -153,8 +161,8 @@ const SelectedItem = () => {
 							<Image
 								src={image}
 								alt={product.title}
-								width={50}
-								height={50}
+								width={60}
+								height={60}
 							/>
 						</div>
 					))}
@@ -163,34 +171,33 @@ const SelectedItem = () => {
 				<Stack
 					direction={{
 						xl: 'row',
+						lg: 'row',
 						xs: 'column',
 						md: 'column',
 						sm: 'column',
 					}}
-					spacing={4}
+					spacing={2}
 				>
 					<Stack spacing={2}>
 						{hoveredImage && (
 							<Image
 								src={hoveredImage}
 								alt={product.title}
-								width={500}
-								height={500}
+								width={isDesktop ? 600 : 300}
+								height={isDesktop ? 600 : 300}
 								objectFit='fill'
-								layout='responsive'
 							/>
 						)}
-						<Typography variant='body1'>
-							R {product.price}
-						</Typography>
-						<Typography variant='body1'>{product.title}</Typography>
 					</Stack>
 					<Stack
 						direction='column'
 						spacing={2}
-						width={{ sm: 500, md: 600, lg: 500, xl: 500 }}
-						pt={4}
+						width={{ xs: 200, sm: 500, md: 600, lg: 500, xl: 500 }}
+						pt={{ lg: 4 }}
 					>
+						<Typography variant='body1'>
+							R {product.price}
+						</Typography>
 						<Typography variant='body1'>{product.title}</Typography>
 						<Typography variant='body1'>
 							{product.description}
@@ -227,14 +234,6 @@ const SelectedItem = () => {
 								}}
 							>
 								XL
-							</Button>
-							<Button
-								variant='outlined'
-								sx={{
-									mx: 0.5,
-								}}
-							>
-								XXL
 							</Button>
 						</Stack>
 						{isAuthenticated && (

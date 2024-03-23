@@ -22,7 +22,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 			borderColor: 'primary.main',
 		},
 	},
-	[theme.breakpoints.down('md')]: {
+	[theme.breakpoints.down('sm')]: {
 		width: 300,
 	},
 }));

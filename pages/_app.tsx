@@ -2,10 +2,11 @@ import React from 'react';
 import Head from 'next/head';
 import { useShallow } from 'zustand/react/shallow';
 import { useMount } from 'react-use';
+import { useRouter } from 'next/router';
 // @store
 import { useStore } from '@/store/session';
 // @mui
-import { CssBaseline, CircularProgress } from '@mui/material';
+import { CssBaseline, CircularProgress, Typography } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 // @components
 import Layout from '@/components/layout';
@@ -20,6 +21,7 @@ function MyApp({
 	Component: React.ElementType;
 	pageProps: any;
 }) {
+	const router = useRouter();
 	const [loader, setLoader] = React.useState('');
 
 	const { checkAuthentication } = useStore(
@@ -67,10 +69,16 @@ function MyApp({
 					}}
 				/>
 			)}
-			{loader === 'done' && (
+			{loader === 'done' &&
+			router.pathname !== '/login' &&
+			router.pathname !== '/signup' ? (
 				<Layout>
 					<Component {...pageProps} />
 				</Layout>
+			) : (
+				<>
+					<Component {...pageProps} />
+				</>
 			)}
 		</ThemeProvider>
 	);

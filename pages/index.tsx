@@ -4,19 +4,13 @@ import { Stack } from '@mui/material';
 import Categories from '@/components/categories';
 // @api
 import { apiFunctions } from '@/pages/api';
+// @types
+import { ICategory } from '@/store/types';
 // @components
 import Features from '@/components/features';
 import Footer from '@/components/footer';
 
-export interface IData {
-	_id: number;
-	name: string;
-	image: string;
-	creationAt: string;
-	updatedAt: string;
-}
-
-const HomePage = ({ categories }: { categories: IData[] }) => {
+const HomePage = ({ categories }: { categories: ICategory[] }) => {
 	return (
 		<Stack
 			justifyContent='center'
@@ -39,7 +33,7 @@ export const getStaticProps = async () => {
 
 	return {
 		props: {
-			categories: categories.data || [],
+			categories: categories || [],
 		},
 	};
 };

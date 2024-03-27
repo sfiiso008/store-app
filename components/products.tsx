@@ -38,6 +38,21 @@ const Products = ({
 		>
 			<Typography variant='h4'>{categoryName}</Typography>
 			<Grid container spacing={2}>
+				{products.length === 0 && (
+					<Stack
+						justifyContent='center'
+						alignItems='center'
+						sx={{
+							display: 'flex',
+							width: '100%',
+							m: 5,
+						}}
+					>
+						<Typography variant='h6' textAlign='center'>
+							No products available...
+						</Typography>
+					</Stack>
+				)}
 				{products &&
 					products.map((product) => (
 						<Grid
@@ -66,7 +81,10 @@ const Products = ({
 								<CardActionArea>
 									<CardMedia
 										component='img'
-										src={product.images[0]}
+										src={
+											product?.images &&
+											product?.images[0]
+										}
 										alt={product.title}
 										sx={{
 											height: { lg: 200, sm: 160 },

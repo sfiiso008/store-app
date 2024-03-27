@@ -1,99 +1,97 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
-import {
-	Stack,
-	Typography,
-	Collapse,
-	IconButton,
-	styled,
-	IconButtonProps,
-	Button,
-	Chip,
-} from '@mui/material';
+import { Stack, Typography, Collapse, Button, Chip } from '@mui/material';
 // @mui-icons
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 // @api
 import { apiFunctions } from '@/pages/api';
+// @types
+import { IProduct, ICategory, ISubCategory } from '@/store/types';
 // @components
 import ProductsView from '@/components/products';
-// @types
-import { IProduct, ICategory } from '@/store/types';
+import ExpandMore from '@/components/expand-more';
 
-interface ExpandMoreProps extends IconButtonProps {
-	expand: boolean;
-}
+const Products: React.FC = () => {
+	const [products, setProducts] = useState<IProduct[]>([]);
+	const [categories, setCategories] = useState<ICategory[]>([]);
+	const [subCategories, setSubCategories] = useState<ISubCategory[]>([]);
+	const [expanded, setExpanded] = useState<boolean>(false);
+	const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+		null
+	);
 
-const ExpandMore = styled((props: ExpandMoreProps) => {
-	const { expand, ...other } = props;
-	return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-	transform: expand ? 'rotate(0deg)' : 'rotate(180deg)',
-	marginLeft: 'auto',
-	transition: theme.transitions.create('transform', {
-		duration: theme.transitions.duration.shortest,
-	}),
-}));
-
-const Products = () => {
-	const [products, setProducts] = React.useState<IProduct[] | []>([]);
-	const [categories, setCategories] = React.useState<ICategory[] | []>([]);
-	const [expanded, setExpanded] = React.useState(false);
-	const [handleFilter, setHandleFilter] = React.useState(false);
-	const [selectedCategory, setSelectedCategory] = React.useState<
-		number | null
+	const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<
+		string | null
 	>(null);
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
 	};
 
-	const handleFilterClick = (categoryId: number) => {
-		setSelectedCategory(categoryId);
-		setHandleFilter(true);
+	const handleCategoryFilterClick = (categoryId: string) => {
+		setSelectedCategoryId(categoryId);
+		setSelectedSubCategoryId(null);
+	};
+
+	const handleSubcategoryFilterClick = (subcategoryId: string) => {
+		setSelectedSubCategoryId(subcategoryId);
 	};
 
 	const resetFilter = () => {
-		setSelectedCategory(null);
-		setHandleFilter(false);
+		setSelectedCategoryId(null);
+		setSelectedSubCategoryId(null);
 	};
 
-	React.useEffect(() => {
-		if (handleFilter && selectedCategory) {
-			const getCategories = async () => {
-				const result = await apiFunctions.getProducts(selectedCategory);
-
-				if (result?.error) {
-					console.error(result.error);
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				let result;
+				if (selectedSubCategoryId) {
+					result = await apiFunctions.getSubCategoryWithProducts(
+						selectedSubCategoryId
+					);
+				} else if (selectedCategoryId) {
+					result = await apiFunctions.getCategoryWithProducts(
+						selectedCategoryId
+					);
+					setSubCategories(result?.subCategories || []);
+					setProducts(result?.products || []);
 				} else {
-					setProducts(result?.data || []);
+					result = await apiFunctions.getAllProducts();
+					setSubCategories([]);
+					setProducts(result?.products || []);
 				}
-			};
-			getCategories();
-		} else {
-			const getAllProducts = async () => {
-				const result = await apiFunctions.getAllProducts();
-
-				if (result?.error) {
-					console.error(result.error);
+				if (result && !result.error) {
+					// Only set products for subcategory if subcategory selected
+					if (selectedSubCategoryId) {
+						setProducts(result.products || []);
+					}
 				} else {
-					setProducts(result?.data || []);
+					console.error(result?.error);
 				}
-			};
-			getAllProducts();
-		}
-	}, [handleFilter, selectedCategory]);
-
-	React.useEffect(() => {
-		const getCategories = async () => {
-			const result = await apiFunctions.getCategories();
-
-			if (result?.error) {
-				console.error(result.error);
-			} else {
-				setCategories(result?.data || []);
+			} catch (error) {
+				console.error('Error fetching data:', error);
 			}
 		};
-		getCategories();
+
+		fetchData();
+	}, [selectedCategoryId, selectedSubCategoryId]);
+
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const result = await apiFunctions.getCategories();
+				if (result && !result.error) {
+					setCategories(result.data || []);
+				} else {
+					console.error(result?.error);
+				}
+			} catch (error) {
+				console.error('Error fetching categories:', error);
+			}
+		};
+
+		fetchCategories();
 	}, []);
 
 	return (
@@ -111,36 +109,82 @@ const Products = () => {
 						<ExpandMoreIcon />
 					</ExpandMore>
 				</Stack>
-
 				<Collapse in={expanded}>
 					<Stack spacing={2} direction='column'>
 						{categories.map((category) => (
-							<Button
-								key={category.id}
-								onClick={() => handleFilterClick(category.id)}
-								sx={{
-									textTransform: 'capitalize',
-									justifyContent: 'flex-start',
-								}}
-							>
-								<Typography variant='body1' textAlign='left'>
-									{category.name}
-								</Typography>
-							</Button>
+							<Stack key={category._id}>
+								<Button
+									onClick={() =>
+										handleCategoryFilterClick(category._id)
+									}
+									sx={{
+										textTransform: 'capitalize',
+										justifyContent: 'flex-start',
+									}}
+								>
+									<Typography
+										variant='body1'
+										textAlign='left'
+									>
+										{category.name}
+									</Typography>
+								</Button>
+								{selectedCategoryId === category._id && (
+									<Collapse in={expanded}>
+										<Stack
+											spacing={2}
+											direction='column'
+											pl={5}
+										>
+											{subCategories.map(
+												(subcategory) => (
+													<Button
+														key={subcategory._id}
+														onClick={() =>
+															handleSubcategoryFilterClick(
+																subcategory._id
+															)
+														}
+														sx={{
+															textTransform:
+																'capitalize',
+															justifyContent:
+																'flex-start',
+														}}
+													>
+														<Typography
+															variant='body2'
+															textAlign='right'
+															fontWeight='bold'
+														>
+															{subcategory.name}
+														</Typography>
+													</Button>
+												)
+											)}
+										</Stack>
+									</Collapse>
+								)}
+							</Stack>
 						))}
 					</Stack>
 				</Collapse>
-				{selectedCategory && (
+				{(selectedCategoryId || selectedSubCategoryId) && (
 					<Stack spacing={2} mt={2}>
 						<Chip
 							label={
 								<Typography>
-									{
-										categories.find(
-											(category) =>
-												category.id === selectedCategory
-										)?.name
-									}
+									{selectedSubCategoryId
+										? subCategories.find(
+												(subcategory) =>
+													subcategory._id ===
+													selectedSubCategoryId
+										  )?.name
+										: categories.find(
+												(category) =>
+													category._id ===
+													selectedCategoryId
+										  )?.name}
 								</Typography>
 							}
 							variant='outlined'
@@ -150,7 +194,6 @@ const Products = () => {
 					</Stack>
 				)}
 			</Stack>
-
 			<ProductsView products={products} categoryName='All Products' />
 		</Stack>
 	);

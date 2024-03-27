@@ -16,6 +16,12 @@ export interface IProduct {
 	title: string;
 }
 
+export interface ISubCategory {
+	_id: string;
+	name: string;
+	categoryId: string;
+}
+
 export interface ICategory {
 	_id: string;
 	name: string;

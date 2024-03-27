@@ -40,34 +40,6 @@ const getCategories = async () => {
 		const result = await res.json();
 
 		return {
-			data: result,
-			error: null,
-		};
-	} catch (error) {
-		if (error instanceof Error) {
-			return {
-				data: null,
-				error: error.message,
-			};
-		}
-	}
-};
-
-const getProducts = async (categoryId: string) => {
-	try {
-		const res = await fetch(`${BaseUrl}/categories?_id=${categoryId}`, {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-		});
-
-		const result = await res.json();
-
-		console.log('result', result);
-
-		return {
 			data: result.data,
 			error: null,
 		};
@@ -81,20 +53,74 @@ const getProducts = async (categoryId: string) => {
 	}
 };
 
-const getAllProducts = async () => {
+const getCategoryWithProducts = async (categoryId: string) => {
 	try {
-		const res = await fetch(`${FAKE_STORE_API}/api/v1/products`);
+		const res = await fetch(`${BaseUrl}/categories?_id=${categoryId}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+		});
 
 		const result = await res.json();
 
 		return {
-			data: result,
+			category: result.data[0],
+			subCategories: result.data[0].subCategories,
+			products: result.data[0].products,
 			error: null,
 		};
 	} catch (error) {
 		if (error instanceof Error) {
 			return {
-				data: null,
+				category: null,
+				subCategories: null,
+				products: null,
+				error: error.message,
+			};
+		}
+	}
+};
+
+const getSubCategoryWithProducts = async (subCategoryId: string) => {
+	try {
+		const res = await fetch(
+			`${BaseUrl}/sub-categories?_id=${subCategoryId}`
+		);
+
+		const result = await res.json();
+
+		return {
+			subCategories: result.data[0],
+			products: result.data[0].products,
+			error: null,
+		};
+	} catch (error) {
+		if (error instanceof Error) {
+			return {
+				subCategories: null,
+				products: null,
+				error: error.message,
+			};
+		}
+	}
+};
+
+const getAllProducts = async () => {
+	try {
+		const res = await fetch(`${BaseUrl}/products`);
+
+		const result = await res.json();
+
+		return {
+			products: result.data,
+			error: null,
+		};
+	} catch (error) {
+		if (error instanceof Error) {
+			return {
+				products: null,
 				error: error.message,
 			};
 		}
@@ -234,10 +260,11 @@ const update = async (data: {
 export const apiFunctions = {
 	getCategory,
 	getCategories,
-	getProducts,
+	getCategoryWithProducts,
 	getProduct,
 	getAllProducts,
 	BaseUrl,
 	updateProfilePicture,
 	update,
+	getSubCategoryWithProducts,
 };

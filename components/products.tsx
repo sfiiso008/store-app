@@ -38,68 +38,78 @@ const Products = ({
 		>
 			<Typography variant='h4'>{categoryName}</Typography>
 			<Grid container spacing={2}>
-				{products.map((product) => (
-					<Grid key={product.title} item xl={3} lg={4} md={6} sm={6}>
-						<Card
-							sx={{
-								width: { lg: 320, sm: 280 },
-								height: { lg: 320, sm: 250 },
-								borderRadius: 2,
-								'&:hover': {
-									boxShadow: '0 0 10px 0 #000',
-								},
-							}}
-							onClick={() => {
-								router.push(`/products/item/${product.id}`);
-							}}
+				{products &&
+					products.map((product) => (
+						<Grid
+							key={product.title}
+							item
+							xl={3}
+							lg={4}
+							md={6}
+							sm={6}
 						>
-							<CardActionArea>
-								<CardMedia
-									component='img'
-									src={product.images[0]}
-									alt={product.title}
-									sx={{
-										height: { lg: 200, sm: 160 },
-										objectFit: 'fill',
-									}}
-								/>
-								<CardContent>
-									<Stack
-										direction='row'
-										justifyContent='space-between'
-									>
-										<Stack>
-											<Typography gutterBottom>
-												{product.title}
-											</Typography>
-											<Typography gutterBottom>
-												R {product.price}
-											</Typography>
-										</Stack>
-										<Stack>
-											<Button
-												size='small'
-												color='primary'
-												onClick={() => {
-													router.push(
-														`/products/item/${product.id}`
-													);
-												}}
-											>
-												<AddShoppingCart
-													sx={{
-														fontSize: '3rem',
-														float: 'right',
+							<Card
+								sx={{
+									width: { lg: 320, sm: 280 },
+									height: { lg: 320, sm: 250 },
+									borderRadius: 2,
+									'&:hover': {
+										boxShadow: '0 0 10px 0 #000',
+									},
+								}}
+								onClick={() => {
+									router.push(
+										`/products/item/${product._id}`
+									);
+								}}
+							>
+								<CardActionArea>
+									<CardMedia
+										component='img'
+										src={product.images[0]}
+										alt={product.title}
+										sx={{
+											height: { lg: 200, sm: 160 },
+											objectFit: 'fill',
+										}}
+									/>
+									<CardContent>
+										<Stack
+											direction='row'
+											justifyContent='space-between'
+										>
+											<Stack>
+												<Typography gutterBottom>
+													{product.title}
+												</Typography>
+												<Typography gutterBottom>
+													R {product.price}
+												</Typography>
+											</Stack>
+											<Stack>
+												<Button
+													size='small'
+													color='primary'
+													onClick={() => {
+														router.push(
+															`/products/item/${product._id}`
+														);
 													}}
-												/>
-											</Button>
+												>
+													<AddShoppingCart
+														sx={{
+															fontSize: '3rem',
+															float: 'right',
+														}}
+													/>
+												</Button>
+											</Stack>
 										</Stack>
-									</Stack>
-								</CardContent>
-							</CardActionArea>
-						</Card>
-					</Grid>
-				))}
+									</CardContent>
+								</CardActionArea>
+							</Card>
+						</Grid>
+					))}
 			</Grid>
 		</Stack>
 	);

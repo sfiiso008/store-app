@@ -18,7 +18,8 @@ const Categories = ({ category }: { category: ICategory }) => {
 			setLoading(true);
 
 			const handleGetProducts = async () => {
-				const res = await apiFunctions.getProducts(category.id);
+				// @todo: get products by category
+				const res = await apiFunctions.getProducts(category._id);
 
 				if (res) {
 					setAllProducts(res.data);
@@ -36,7 +37,7 @@ const Categories = ({ category }: { category: ICategory }) => {
 		<Stack direction='row' spacing={2} width='100vw' px={2}>
 			<Stack width={{ xl: '20vw', lg: '20vw', md: '30vw' }}>
 				<Typography variant='body1'>{`Home/Products/${category.name}`}</Typography>
-				{/* <Typography variant='h3'>Sidebar</Typography> */}
+				<Typography variant='h3'>Sidebar</Typography>
 			</Stack>
 			<Products products={allProducts} categoryName={category.name} />
 		</Stack>
@@ -47,7 +48,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 	const { params } = context;
 	const categoryId = params?.categoryId;
 
-	const category = await apiFunctions.getCategory(Number(categoryId));
+	const category = await apiFunctions.getCategory(categoryId as string);
 
 	return {
 		props: {
@@ -58,10 +59,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const categories = await apiFunctions.getCategories();
+	const result = await apiFunctions.getCategories();
+
+	const categories = result?.data;
 
 	const paths = categories?.data?.map((categories: ICategory) => ({
-		params: { categoryId: categories.id.toString() },
+		params: { categoryId: categories._id },
 	}));
 
 	return {

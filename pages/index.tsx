@@ -9,7 +9,7 @@ import Features from '@/components/features';
 import Footer from '@/components/footer';
 
 export interface IData {
-	id: number;
+	_id: number;
 	name: string;
 	image: string;
 	creationAt: string;
@@ -33,11 +33,13 @@ const HomePage = ({ categories }: { categories: IData[] }) => {
 };
 
 export const getStaticProps = async () => {
-	const categories = await apiFunctions.getCategories();
+	const result = await apiFunctions.getCategories();
+
+	const categories = result?.data;
 
 	return {
 		props: {
-			categories: categories?.data || [],
+			categories: categories.data || [],
 		},
 	};
 };

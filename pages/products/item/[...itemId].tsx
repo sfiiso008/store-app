@@ -65,7 +65,7 @@ const SelectedItem = () => {
 		if (itemId) {
 			const handleGetProduct = async () => {
 				const res = await apiFunctions.getProduct({
-					productId: Number(itemId),
+					productId: itemId as string,
 				});
 
 				if (!res?.error) {

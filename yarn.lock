@@ -3604,6 +3604,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-multi-carousel@npm:^2.8.4":
+  version: 2.8.4
+  resolution: "react-multi-carousel@npm:2.8.4"
+  checksum: 056b89bfe98adc1267cdf1d757c7276f3394f3465418aee552ce831692ab0befe3882166836c9535fdc76c03395a704d3afafe83ee725ad926745f3a0d1a5802
+  languageName: node
+  linkType: hard
+
 "react-transition-group@npm:^4.4.5":
   version: 4.4.5
   resolution: "react-transition-group@npm:4.4.5"
@@ -4064,6 +4071,7 @@ __metadata:
     react: "npm:^18"
     react-dom: "npm:^18"
     react-hook-form: "npm:^7.51.0"
+    react-multi-carousel: "npm:^2.8.4"
     react-use: "npm:^17.5.0"
     socket.io-client: "npm:^4.7.5"
     typescript: "npm:^5"

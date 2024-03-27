@@ -18,15 +18,12 @@ import {
 	IconButton,
 	Stack,
 	Hidden,
-	InputBase,
 	Badge,
 } from '@mui/material';
 // @mui-icons
 import {
 	ShoppingBasket,
-	Adb as AdbIcon,
 	Menu as MenuIcon,
-	Search as SearchIcon,
 	Favorite,
 } from '@mui/icons-material';
 

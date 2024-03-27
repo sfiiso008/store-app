@@ -89,7 +89,7 @@ GlobalTheme.typography.h4 = {
 };
 
 GlobalTheme.typography.h5 = {
-	fontSize: '6rem',
+	fontSize: '4rem',
 	fontWeight: 900,
 	letterSpacing: '0.5rem',
 	margin: '2rem 0',

@@ -9,9 +9,9 @@ let token =
 		? localStorage.getItem('access-token')
 		: null;
 
-const getCategory = async (id: number) => {
+const getCategory = async (id: string) => {
 	try {
-		const res = await fetch(`${FAKE_STORE_API}/api/v1/categories/${id}`);
+		const res = await fetch(`${BaseUrl}/categories/${id}`);
 
 		const result = await res.json();
 
@@ -31,7 +31,7 @@ const getCategory = async (id: number) => {
 
 const getCategories = async () => {
 	try {
-		const res = await fetch(`${FAKE_STORE_API}/api/v1/categories`);
+		const res = await fetch(`${BaseUrl}/categories`);
 
 		if (!res.ok) {
 			throw new Error('Error fetching data');
@@ -53,16 +53,22 @@ const getCategories = async () => {
 	}
 };
 
-const getProducts = async (categoryId: number) => {
+const getProducts = async (categoryId: string) => {
 	try {
-		const res = await fetch(
-			`${FAKE_STORE_API}/api/v1/categories/${categoryId}/products`
-		);
+		const res = await fetch(`${BaseUrl}/categories?_id=${categoryId}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+		});
 
 		const result = await res.json();
 
+		console.log('result', result);
+
 		return {
-			data: result,
+			data: result.data,
 			error: null,
 		};
 	} catch (error) {
@@ -95,12 +101,11 @@ const getAllProducts = async () => {
 	}
 };
 
-const getProduct = async ({ productId }: { productId: number }) => {
+const getProduct = async ({ productId }: { productId: string }) => {
 	try {
-		const res = await fetch(
-			`${FAKE_STORE_API}/api/v1/products/${productId}`
-		);
+		const res = await fetch(`${BaseUrl}/products/${productId}`);
 
+		console.log('res', res);
 		const result = await res.json();
 
 		return {

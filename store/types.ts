@@ -1,7 +1,7 @@
 import { Application } from '@feathersjs/feathers';
 
 export interface IProduct {
-	id: number;
+	_id: string;
 	category: {
 		creationAt: string;
 		id: number;
@@ -17,7 +17,7 @@ export interface IProduct {
 }
 
 export interface ICategory {
-	id: number;
+	_id: string;
 	name: string;
 	image: string;
 	creationAt: string;

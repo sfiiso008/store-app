@@ -35,43 +35,54 @@ const Categories = ({ categories }: { categories: IData[] }) => {
 					>
 						{categories.slice(0, 3).map((currentItem) => (
 							<Stack
-								key={currentItem.id}
+								key={currentItem._id}
 								sx={{
-									justifyContent: 'center',
-									alignItems: 'center',
-									background: `url(${currentItem.image}) no-repeat`,
-									backgroundPosition: 'center center',
-									backgroundSize: 'cover',
 									width: { md: 300, lg: 400, xs: 350 },
 									height: 400,
-									'&:hover': {
-										cursor: 'pointer',
-										width: { md: 500, lg: 500, xs: 400 },
-										height: 500,
-										transition: 'all 1s',
-									},
 								}}
 							>
-								<Typography
-									variant='h5'
-									textTransform='initial'
-									color='secondary.main'
+								<Stack
+									sx={{
+										justifyContent: 'center',
+										alignItems: 'center',
+										background: `url(${currentItem.image}) no-repeat`,
+										backgroundPosition: 'center center',
+										backgroundSize: 'cover',
+										width: '100%',
+										height: '100%',
+										'&:hover': {
+											cursor: 'pointer',
+											width: {
+												md: 500,
+												lg: 450,
+												xs: 400,
+											},
+											height: 500,
+											transition: 'all 1s',
+										},
+									}}
 								>
-									{currentItem.name}
-								</Typography>
-								<Button variant='contained' color='primary'>
 									<Typography
-										variant='body1'
+										variant='h5'
 										textTransform='initial'
-										onClick={() =>
-											router.push(
-												`/products/${currentItem.id}`
-											)
-										}
+										color='secondary.main'
 									>
-										Browse now
+										{currentItem.name}
 									</Typography>
-								</Button>
+									<Button variant='contained' color='primary'>
+										<Typography
+											variant='body1'
+											textTransform='initial'
+											onClick={() =>
+												router.push(
+													`/products/${currentItem._id}`
+												)
+											}
+										>
+											Browse now
+										</Typography>
+									</Button>
+								</Stack>
 							</Stack>
 						))}
 					</Stack>

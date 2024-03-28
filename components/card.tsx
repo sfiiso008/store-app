@@ -5,7 +5,13 @@ import { Stack, Typography, Button } from '@mui/material';
 // @types
 import { ICategory } from '@/store/types';
 
-const Card = ({ category }: { category: ICategory }) => {
+const Card = ({
+	category,
+	setAnimate,
+}: {
+	category: ICategory;
+	setAnimate: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
 	const router = useRouter();
 
 	return (
@@ -17,6 +23,8 @@ const Card = ({ category }: { category: ICategory }) => {
 			}}
 		>
 			<Stack
+				onMouseEnter={() => setAnimate(false)}
+				onMouseLeave={() => setAnimate(true)}
 				sx={{
 					justifyContent: 'center',
 					alignItems: 'center',

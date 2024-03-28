@@ -26,12 +26,15 @@ const Carousel = ({ categories }: { categories: ICategory[] }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+	const [animate, setAnimate] = useState(true);
 
 	const [currentPage, setCurrentPage] = useState(0);
 	const itemsPerPage = isMobile ? 1 : isTablet ? 2 : 3;
 	const totalItems = categories.length;
 
 	useEffect(() => {
+		if (!animate) return;
+
 		const interval = setInterval(goToNext, 5000);
 		return () => clearInterval(interval);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,7 +68,7 @@ const Carousel = ({ categories }: { categories: ICategory[] }) => {
 							alignItems='center'
 							p={2}
 						>
-							<Card category={item} />
+							<Card category={item} setAnimate={setAnimate} />
 						</Stack>
 					</Grow>
 				))}

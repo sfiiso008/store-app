@@ -16,22 +16,8 @@ import {
 import { Favorite } from '@mui/icons-material';
 // @api
 import { apiFunctions } from '@/pages/api';
-
-interface IProduct {
-	id: number;
-	category: {
-		creationAt: string;
-		id: number;
-		image: string;
-		name: string;
-		updatedAt: string;
-	};
-	creationAt: string;
-	description: string;
-	images: string[];
-	price: number;
-	title: string;
-}
+// @types
+import { IProduct } from '@/store/types';
 
 const SelectedItem = () => {
 	const isDesktop = useMediaQuery('(min-width:600px)');
@@ -87,7 +73,7 @@ const SelectedItem = () => {
 			const data = {
 				userId: user._id as string,
 				items: {
-					productId: product?.id,
+					productId: product?._id,
 					quantity: 1,
 					price: product?.price,
 					itemPicture: product?.images[0],
@@ -104,7 +90,7 @@ const SelectedItem = () => {
 			const data = {
 				userId: user._id as string,
 				items: {
-					productId: product?.id,
+					productId: product?._id,
 					price: product?.price,
 					itemPicture: product?.images[0],
 					itemName: product?.title as string,
@@ -122,7 +108,7 @@ const SelectedItem = () => {
 		if (user && product) {
 			const res = await removeFromWishlist({
 				userId: user._id as string,
-				productId: product?.id as number,
+				productId: product?._id,
 			});
 
 			if (res?.success) {
@@ -136,7 +122,7 @@ const SelectedItem = () => {
 			const handleAddedToWishlist = async () => {
 				const res = await AddedToWishlist({
 					userId: user._id as string,
-					productId: product?.id as number,
+					productId: product?._id,
 				});
 
 				if (res?.success) {

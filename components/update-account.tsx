@@ -1,14 +1,23 @@
 import React from 'react';
+import { useShallow } from 'zustand/react/shallow';
+// @store
+import { useStore } from '@/store/session';
 // @form
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-// @api
-import { apiFunctions } from '@/pages/api';
 // @types
 import { TUserData } from '@/store/types';
 // @mui
-import { Stack, Typography, Skeleton, styled, Avatar } from '@mui/material';
+import {
+	Stack,
+	Typography,
+	Skeleton,
+	styled,
+	Avatar,
+	Collapse,
+	Alert,
+} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // @mui-icons
 import {
@@ -44,6 +53,15 @@ const validationSchema = Yup.object().shape({
 });
 
 const AccountDetails = ({ user }: { user: TUserData }) => {
+	const [error, setError] = React.useState<string | null>(null);
+
+	const { updateUser, updateProfilePic } = useStore(
+		useShallow((state) => ({
+			updateUser: state.updateUser,
+			updateProfilePic: state.updateProfilePic,
+		}))
+	);
+
 	const [isLoading, setLoading] = React.useState(false);
 	const [fileLoading, setFileLoading] = React.useState(false);
 
@@ -63,10 +81,14 @@ const AccountDetails = ({ user }: { user: TUserData }) => {
 
 		if (user._id) {
 			if (e.target.files) {
-				await apiFunctions.updateProfilePicture(
-					e.target.files[0] as File,
+				const result = await updateProfilePic(
+					e.target.files as FileList,
 					user._id as string
 				);
+
+				if (!result?.success) {
+					setError(result?.message as string);
+				}
 			}
 		}
 		setFileLoading(false);
@@ -76,13 +98,10 @@ const AccountDetails = ({ user }: { user: TUserData }) => {
 		setLoading(true);
 
 		if (user._id) {
-			const result = await apiFunctions.update({
-				...payload,
-				id: user?._id as string,
-			});
+			const result = await updateUser(user._id as string, payload);
 
 			if (!result?.success) {
-				return;
+				setError(result?.message as string);
 			}
 		}
 
@@ -95,16 +114,12 @@ const AccountDetails = ({ user }: { user: TUserData }) => {
 				display: 'flex',
 				flexDirection: 'column',
 				alignItems: 'center',
-				mt: { xl: 10, lg: 0 },
+				mt: { xl: 10, lg: 0, xs: 10 },
 				width: '100%',
-				minHeight: { xs: '85vh' },
 			}}
 			spacing={2}
 		>
 			<Stack>
-				<Typography variant='h3' textAlign='center'>
-					Account Details
-				</Typography>
 				<Typography
 					variant='body1'
 					textAlign='center'
@@ -202,6 +217,11 @@ const AccountDetails = ({ user }: { user: TUserData }) => {
 					}}
 				/>
 			</Stack>
+			<Collapse in={error != null} sx={{ width: '100%' }}>
+				<Alert sx={{ width: '100%' }} severity='error'>
+					{error}
+				</Alert>
+			</Collapse>
 			<LoadingButton
 				variant='contained'
 				size='large'

@@ -39,7 +39,7 @@ export type TUserData = {
 };
 
 export interface IItems {
-	productId: number | null;
+	productId: string | null;
 	price: number | null;
 	itemPicture: string | null;
 	itemName: string | null;
@@ -92,7 +92,7 @@ export interface IAuthActions {
 	addToCart: (payload: {
 		userId: string;
 		items: {
-			productId: number;
+			productId: string;
 			quantity: number;
 			price: number;
 			itemPicture: string;
@@ -104,7 +104,7 @@ export interface IAuthActions {
 	}>;
 	removeFromCart: (payload: {
 		userId: string;
-		productId: number;
+		productId: string;
 	}) => Promise<{
 		success: boolean;
 		message: string;
@@ -123,7 +123,7 @@ export interface IAuthActions {
 	addToWishlist: (payload: {
 		userId: string;
 		items: {
-			productId: number;
+			productId: string;
 			price: number;
 			itemPicture: string;
 			itemName: string;
@@ -134,23 +134,41 @@ export interface IAuthActions {
 	}>;
 	AddedToWishlist: (payload: {
 		userId: string;
-		productId: number;
+		productId: string;
 	}) => Promise<{
 		success: boolean;
 		alreadyExists: boolean;
 	}>;
 	removeFromWishlist: (payload: {
 		userId: string;
-		productId: number;
+		productId: string;
 	}) => Promise<{
 		success: boolean;
 		message: string;
 	}>;
 	updateQuantity: (payload: {
 		userId: string;
-		productId: number;
+		productId: string;
 		newQuantity: number;
 	}) => Promise<{
+		success: boolean;
+		message: string;
+	}>;
+	updateUser: (
+		userId: string,
+		payload: {
+			lastName: string;
+			firstName: string;
+			email: string;
+		}
+	) => Promise<{
+		success: boolean;
+		message: string;
+	}>;
+	updateProfilePic: (
+		file: FileList,
+		userId: string
+	) => Promise<{
 		success: boolean;
 		message: string;
 	}>;

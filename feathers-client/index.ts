@@ -1,25 +1,15 @@
-import { feathers as feathersInit, HookContext } from '@feathersjs/feathers';
+import { feathers as feathersInit } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import auth, { AuthenticationClient } from '@feathersjs/authentication-client';
 import io from 'socket.io-client';
 
 const IS_BROWSER = typeof window !== 'undefined';
-const IS_LOCAL_STORAGE_AVAILABLE = typeof localStorage !== 'undefined';
+
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL as string;
 
-class CustomAuthenticationClient extends AuthenticationClient {
-	handleError(error: any, type: string) {
-		if (error.code === 401 || error.code === 404) {
-			const promise = this.removeAccessToken().then(() => this.reset());
-
-			return type === 'logout'
-				? promise
-				: promise.then(() => Promise.reject(error));
-		}
-
-		return Promise.reject(error);
-	}
-}
+const token = IS_BROWSER
+	? window.localStorage.getItem('access-token')
+	: undefined;
 
 export function createFeathersClient() {
 	const socket = io(BASE_URL);
@@ -33,12 +23,10 @@ export function createFeathersClient() {
 
 	feathers.configure(
 		auth({
-			storage:
-				IS_BROWSER && IS_LOCAL_STORAGE_AVAILABLE
-					? localStorage
-					: undefined,
-			storageKey: 'access-token',
-			Authentication: CustomAuthenticationClient,
+			storage: IS_BROWSER ? window.localStorage : undefined,
+			storageKey: token ? 'access-token' : undefined,
+			path: '/authentication',
+			Authentication: AuthenticationClient,
 		})
 	);
 

@@ -39,7 +39,7 @@ const DisplayCartItem = ({
 
 	const [isInWishlist, setIsInWishlist] = React.useState(false);
 
-	const handleRemove = async (productId: number) => {
+	const handleRemove = async (productId: string) => {
 		if (view === 'cart') {
 			await removeFromCart({
 				userId: user._id as string,
@@ -57,7 +57,7 @@ const DisplayCartItem = ({
 	};
 
 	const handleAdd = async (product: {
-		productId: number;
+		productId: string;
 		price: number;
 		itemName: string;
 		itemPicture: string;
@@ -102,7 +102,7 @@ const DisplayCartItem = ({
 	};
 
 	const handleUpdateQuantity = async (
-		productId: number,
+		productId: string,
 		newQuantity: number
 	) => {
 		if (user) {
@@ -123,7 +123,7 @@ const DisplayCartItem = ({
 			const handleAddedToWishlist = async () => {
 				const res = await AddedToWishlist({
 					userId: user._id as string,
-					productId: item.productId as number,
+					productId: item.productId as string,
 				});
 
 				if (res?.success) {
@@ -158,7 +158,7 @@ const DisplayCartItem = ({
 								variant='outlined'
 								onClick={() =>
 									handleUpdateQuantity(
-										item.productId as number,
+										item.productId as string,
 										item.quantity - 1
 									)
 								}
@@ -169,7 +169,7 @@ const DisplayCartItem = ({
 							<Button
 								variant='outlined'
 								onClick={() =>
-									handleRemove(item.productId as number)
+									handleRemove(item.productId as string)
 								}
 							>
 								-
@@ -186,7 +186,7 @@ const DisplayCartItem = ({
 							variant='outlined'
 							onClick={() =>
 								handleUpdateQuantity(
-									item.productId as number,
+									item.productId as string,
 									item.quantity + 1
 								)
 							}
@@ -197,7 +197,7 @@ const DisplayCartItem = ({
 				)}
 				<Button
 					variant='outlined'
-					onClick={() => handleRemove(item.productId as number)}
+					onClick={() => handleRemove(item.productId as string)}
 				>
 					Remove
 				</Button>
@@ -206,7 +206,7 @@ const DisplayCartItem = ({
 						variant='outlined'
 						onClick={() =>
 							handleAdd({
-								productId: item.productId as number,
+								productId: item.productId as string,
 								price: item.price as number,
 								itemName: item.itemName as string,
 								itemPicture: item.itemPicture as string,
@@ -224,7 +224,7 @@ const DisplayCartItem = ({
 						variant='outlined'
 						onClick={() =>
 							handleAdd({
-								productId: item.productId as number,
+								productId: item.productId as string,
 								price: item.price as number,
 								itemName: item.itemName as string,
 								itemPicture: item.itemPicture as string,

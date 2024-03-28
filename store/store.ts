@@ -1,5 +1,7 @@
 import { StateCreator } from 'zustand/vanilla';
 import { createFeathersClient } from '@/feathers-client';
+// @api
+import { apiFunctions } from '@/pages/api';
 // @types
 import { TAuthStore } from './types';
 
@@ -66,7 +68,6 @@ export const createAuthStore =
 				};
 			}
 		},
-
 		login: async (payload: { email: string; password: string }) => {
 			try {
 				const result = await createFeathersClient().authenticate({
@@ -84,10 +85,97 @@ export const createAuthStore =
 
 				return { success: true, message: 'Login successful' };
 			} catch (error) {
-				console.error('Login failed', error);
 				return {
 					success: false,
 					message: 'Login failed. Please check your credentials.',
+				};
+			}
+		},
+		updateUser: async (
+			userId: string,
+			payload: {
+				lastName: string;
+				firstName: string;
+				email: string;
+			}
+		) => {
+			try {
+				const result = await createFeathersClient()
+					.service('users')
+					.patch(userId, payload);
+
+				if (result) {
+					set((state) => ({
+						...state,
+						isAuthenticated: true,
+						feathersClient: state.feathersClient,
+						user: {
+							_id: result._id,
+							email: result.email,
+							firstName: result.firstName,
+							lastName: result.lastName,
+							profilePicture: result.profilePicture,
+						},
+					}));
+				}
+
+				return { success: true, message: 'User updated successfully' };
+			} catch (error) {
+				console.error('User update failed', error);
+				return {
+					success: false,
+					message: 'User update failed. An error occurred.',
+				};
+			}
+		},
+		updateProfilePic: async (file: FileList, userId: string) => {
+			try {
+				const accessToken =
+					await createFeathersClient().authentication.getAccessToken();
+
+				const uploadResult = await apiFunctions.uploadFile(file);
+
+				if (!uploadResult || !uploadResult.urls) {
+					return {
+						success: false,
+						message: 'Upload failed. An error occurred.',
+					};
+				}
+
+				const { urls } = uploadResult;
+
+				const result = await createFeathersClient()
+					.service('users')
+					.patch(
+						userId,
+						{
+							profilePicture: urls[0],
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${accessToken}`,
+							},
+						}
+					);
+
+				if (result) {
+					set((state) => ({
+						...state,
+						isAuthenticated: true,
+						feathersClient: state.feathersClient,
+						user: {
+							...state.user,
+							profilePicture: result.profilePicture,
+						},
+					}));
+				}
+
+				return { success: true, message: 'Profile picture updated' };
+			} catch (error) {
+				return {
+					success: false,
+					message:
+						'Profile picture update failed. An error occurred.',
 				};
 			}
 		},
@@ -180,7 +268,7 @@ export const createAuthStore =
 		addToCart: async (payload: {
 			userId: string;
 			items: {
-				productId: number;
+				productId: string;
 				quantity: number;
 				price: number;
 				itemPicture: string;
@@ -217,7 +305,7 @@ export const createAuthStore =
 		},
 		removeFromCart: async (payload: {
 			userId: string;
-			productId: number;
+			productId: string;
 		}) => {
 			try {
 				const results = await createFeathersClient()
@@ -282,7 +370,7 @@ export const createAuthStore =
 		addToWishlist: async (payload: {
 			userId: string;
 			items: {
-				productId: number;
+				productId: string;
 				price: number;
 				itemPicture: string;
 				itemName: string;
@@ -318,7 +406,7 @@ export const createAuthStore =
 		},
 		AddedToWishlist: async (payload: {
 			userId: string;
-			productId: number;
+			productId: string;
 		}) => {
 			try {
 				const results = await createFeathersClient()
@@ -346,7 +434,7 @@ export const createAuthStore =
 
 		removeFromWishlist: async (payload: {
 			userId: string;
-			productId: number;
+			productId: string;
 		}) => {
 			try {
 				const results = await createFeathersClient()
@@ -407,7 +495,7 @@ export const createAuthStore =
 		},
 		updateQuantity: async (payload: {
 			userId: string;
-			productId: number;
+			productId: string;
 			newQuantity: number;
 		}) => {
 			try {

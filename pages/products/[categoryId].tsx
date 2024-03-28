@@ -13,15 +13,17 @@ import Products from '@/components/products';
 import ExpandMore from '@/components/expand-more';
 
 const Categories = ({ category }: { category: ICategory }) => {
-	const [allProducts, setAllProducts] = React.useState<IProduct[]>([]);
 	const [allSubCategories, setAllSubCategories] = React.useState<
 		{ _id: string; name: string }[]
 	>([]);
-	const [loading, setLoading] = React.useState<boolean>(false);
-	const [expanded, setExpanded] = React.useState<boolean>(false);
+
 	const [selectedSubCategory, setSelectedSubCategory] = React.useState<
 		string | null
 	>(null);
+
+	const [allProducts, setAllProducts] = React.useState<IProduct[]>([]);
+	const [loading, setLoading] = React.useState<boolean>(false);
+	const [expanded, setExpanded] = React.useState<boolean>(false);
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
@@ -79,22 +81,26 @@ const Categories = ({ category }: { category: ICategory }) => {
 
 				<Collapse in={expanded}>
 					<Stack spacing={2} direction='column'>
-						{allSubCategories.map((subCategory) => (
-							<Button
-								key={subCategory._id}
-								onClick={() =>
-									handleFilterClick(subCategory._id)
-								}
-								sx={{
-									textTransform: 'capitalize',
-									justifyContent: 'flex-start',
-								}}
-							>
-								<Typography variant='body1' textAlign='left'>
-									{subCategory.name}
-								</Typography>
-							</Button>
-						))}
+						{allSubCategories &&
+							allSubCategories.map((subCategory) => (
+								<Button
+									key={subCategory._id}
+									onClick={() =>
+										handleFilterClick(subCategory._id)
+									}
+									sx={{
+										textTransform: 'capitalize',
+										justifyContent: 'flex-start',
+									}}
+								>
+									<Typography
+										variant='body1'
+										textAlign='left'
+									>
+										{subCategory.name}
+									</Typography>
+								</Button>
+							))}
 					</Stack>
 				</Collapse>
 				{selectedSubCategory && (
@@ -102,12 +108,11 @@ const Categories = ({ category }: { category: ICategory }) => {
 						<Chip
 							label={
 								<Typography>
-									{
+									{allSubCategories &&
 										allSubCategories.find(
 											(sub) =>
 												sub._id === selectedSubCategory
-										)?.name
-									}
+										)?.name}
 								</Typography>
 							}
 							variant='outlined'
@@ -117,13 +122,30 @@ const Categories = ({ category }: { category: ICategory }) => {
 					</Stack>
 				)}
 			</Stack>
-			<Products products={allProducts} categoryName={category.name} />
+			{loading ? (
+				<Stack
+					justifyContent='center'
+					alignItems='center'
+					sx={{
+						display: 'flex',
+						width: '100%',
+						m: 5,
+					}}
+				>
+					<Typography variant='h6' textAlign='center'>
+						Loading...
+					</Typography>
+				</Stack>
+			) : (
+				<Products products={allProducts} categoryName={category.name} />
+			)}
 		</Stack>
 	);
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const categoryId = params?.categoryId as string;
+
 	const category = await apiFunctions.getCategory(categoryId);
 
 	return {

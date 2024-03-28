@@ -1,5 +1,6 @@
+import Compressor from 'compressorjs';
+
 const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-const FAKE_STORE_API = 'https://api.escuelajs.co';
 
 const IS_BROWSER = typeof window !== 'undefined';
 const IS_LOCAL_STORAGE_AVAILABLE = typeof localStorage !== 'undefined';
@@ -131,7 +132,6 @@ const getProduct = async ({ productId }: { productId: string }) => {
 	try {
 		const res = await fetch(`${BaseUrl}/products/${productId}`);
 
-		console.log('res', res);
 		const result = await res.json();
 
 		return {
@@ -148,13 +148,37 @@ const getProduct = async ({ productId }: { productId: string }) => {
 	}
 };
 
-const uploadFile = async (data: { file: File }) => {
+const uploadFile = async (files: FileList) => {
 	try {
 		const formData = new FormData();
-		formData.append('file', data.file);
+
+		for (let i = 0; i < files.length; i++) {
+			const compressedFile = await new Promise<File>(
+				(resolve, reject) => {
+					new Compressor(files[i], {
+						quality: 0.6, // Adjust quality as needed
+						success(result) {
+							resolve(
+								new File([result], files[i].name, {
+									type: result.type,
+								})
+							);
+						},
+						error(error) {
+							reject(error);
+						},
+					});
+				}
+			);
+
+			formData.append(`files`, compressedFile);
+		}
 
 		const response = await fetch(`${BaseUrl}/upload`, {
 			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
 			body: formData,
 		});
 
@@ -166,92 +190,13 @@ const uploadFile = async (data: { file: File }) => {
 
 		return {
 			message: result.message,
-			url: result.url,
+			urls: result.urls,
 		};
 	} catch (error) {
 		if (error instanceof Error) {
 			return {
-				data: null,
-				error: error.message,
-			};
-		}
-	}
-};
-
-const updateProfilePicture = async (file: File, userId: string) => {
-	try {
-		const uploadResult = await uploadFile({
-			file,
-		});
-
-		if (!uploadResult || !uploadResult.url) {
-			throw new Error('Upload failed');
-		}
-
-		const { url } = uploadResult;
-
-		const response = await fetch(`${BaseUrl}/users/${userId}`, {
-			method: 'PATCH',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-			body: JSON.stringify({
-				profilePicture: url,
-			}),
-		});
-
-		if (!response.ok) {
-			throw new Error('Something went wrong');
-		}
-
-		return {
-			success: true,
-			message: null,
-		};
-	} catch (error) {
-		if (error instanceof Error) {
-			return {
-				data: null,
-				error: error.message,
-			};
-		}
-	}
-};
-
-const update = async (data: {
-	id: string;
-	email: string;
-	firstName: string;
-	lastName: string;
-}) => {
-	try {
-		const response = await fetch(`${BaseUrl}/users/${data.id}`, {
-			method: 'PATCH',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-			body: JSON.stringify({
-				email: data.email,
-				firstName: data.firstName,
-				lastName: data.lastName,
-			}),
-		});
-
-		if (!response.ok) {
-			throw new Error('Something went wrong');
-		}
-
-		return {
-			success: true,
-			message: null,
-		};
-	} catch (error) {
-		if (error instanceof Error) {
-			return {
-				data: null,
-				error: error.message,
+				urls: null,
+				message: error.message,
 			};
 		}
 	}
@@ -263,8 +208,7 @@ export const apiFunctions = {
 	getCategoryWithProducts,
 	getProduct,
 	getAllProducts,
-	BaseUrl,
-	updateProfilePicture,
-	update,
+	uploadFile,
 	getSubCategoryWithProducts,
+	BaseUrl,
 };

@@ -55,36 +55,18 @@ export interface ICartDetails {
 	items: CartItems[];
 }
 
-export type TData = {
+export interface IUserSessionActions {
 	user: TUserData;
-	cart: ICartDetails;
-};
-
-export interface IUserSessionActions extends TData {
 	setUser: (setUser: TUserData) => void;
+}
+
+export interface IProductData {
+	cart: ICartDetails;
 	setCartItem: (setCartItem: ICartDetails) => void;
 }
 
-export interface IAuthActions {
-	login: (payload: { email: string; password: string }) => Promise<{
-		success: boolean;
-		message: string | null;
-	}>;
-	logout: () => Promise<{
-		success: boolean;
-	}>;
+export interface IProductActions {
 	feathersClient: Application;
-	isAuthenticated: boolean;
-	checkAuthentication: () => Promise<{ success: boolean; message: string }>;
-	signup: (payload: {
-		email: string;
-		password: string;
-		firstName: string;
-		lastName: string;
-	}) => Promise<{
-		success: boolean;
-		message: string | null;
-	}>;
 	getCart: (payload: { userId: string }) => Promise<{
 		success: boolean;
 		message: string;
@@ -154,6 +136,27 @@ export interface IAuthActions {
 		success: boolean;
 		message: string;
 	}>;
+}
+export interface IAuthActions {
+	login: (payload: { email: string; password: string }) => Promise<{
+		success: boolean;
+		message: string | null;
+	}>;
+	logout: () => Promise<{
+		success: boolean;
+	}>;
+	feathersClient: Application;
+	isAuthenticated: boolean;
+	checkAuthentication: () => Promise<{ success: boolean; message: string }>;
+	signup: (payload: {
+		email: string;
+		password: string;
+		firstName: string;
+		lastName: string;
+	}) => Promise<{
+		success: boolean;
+		message: string | null;
+	}>;
 	updateUser: (
 		userId: string,
 		payload: {
@@ -173,5 +176,7 @@ export interface IAuthActions {
 		message: string;
 	}>;
 }
+
+export type TDataStore = IProductData & IProductActions;
 
 export type TAuthStore = IUserSessionActions & IAuthActions;

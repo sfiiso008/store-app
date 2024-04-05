@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useShallow } from 'zustand/react/shallow';
 import Link from 'next/link';
 // @store
-import { useStore } from '@/store/session';
+import { useStore, useDataStore } from '@/store/session';
 // @mui
 import {
 	MenuItem,
@@ -38,11 +38,16 @@ const pages = [
 ];
 
 const ResponsiveAppBar = () => {
-	const { user, logout, isAuthenticated, cart, getTotal } = useStore(
+	const { user, logout, isAuthenticated } = useStore(
 		useShallow((state) => ({
 			user: state.user,
 			logout: state.logout,
 			isAuthenticated: state.isAuthenticated,
+		}))
+	);
+
+	const { cart, getTotal } = useDataStore(
+		useShallow((state) => ({
 			cart: state.cart,
 			getTotal: state.getTotal,
 		}))

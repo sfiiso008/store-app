@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { useShallow } from 'zustand/react/shallow';
 // @store
-import { useStore } from '@/store/session';
+import { useStore, useDataStore } from '@/store/session';
 // @mui
 import {
 	Button,
@@ -22,23 +22,22 @@ import { IProduct } from '@/store/types';
 const SelectedItem = () => {
 	const isDesktop = useMediaQuery('(min-width:600px)');
 
-	const {
-		isAuthenticated,
-		user,
-		addToCart,
-		addToWishlist,
-		AddedToWishlist,
-		removeFromWishlist,
-	} = useStore(
+	const { isAuthenticated, user } = useStore(
 		useShallow((state) => ({
 			user: state.user,
-			addToCart: state.addToCart,
-			addToWishlist: state.addToWishlist,
-			AddedToWishlist: state.AddedToWishlist,
-			removeFromWishlist: state.removeFromWishlist,
 			isAuthenticated: state.isAuthenticated,
 		}))
 	);
+
+	const { addToCart, addToWishlist, AddedToWishlist, removeFromWishlist } =
+		useDataStore(
+			useShallow((state) => ({
+				addToCart: state.addToCart,
+				addToWishlist: state.addToWishlist,
+				AddedToWishlist: state.AddedToWishlist,
+				removeFromWishlist: state.removeFromWishlist,
+			}))
+		);
 
 	const router = useRouter();
 	const { itemId } = router.query;

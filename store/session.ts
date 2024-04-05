@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import { persistNSync } from 'persist-and-sync';
 // @stores
 import { createAuthStore } from './store';
-import { TAuthStore } from './types';
+import { createDataStore } from './data-store';
+import { TAuthStore, TDataStore } from './types';
 
 export const useStore = create<TAuthStore>()(
 	persistNSync(
@@ -12,3 +13,4 @@ export const useStore = create<TAuthStore>()(
 		{ name: 'store' }
 	)
 );
+export const useDataStore = create<TDataStore>()(createDataStore());

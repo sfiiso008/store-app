@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { useShallow } from 'zustand/react/shallow';
 // @store
-import { useStore } from '@/store/session';
+import { useStore, useDataStore } from '@/store/session';
 // @mui
 import { Stack, Typography, Box, Button } from '@mui/material';
 // @types
@@ -17,18 +17,22 @@ const DisplayCartItem = ({
 	view: 'cart' | 'favorites';
 	setRefetch: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+	const { user } = useStore(
+		useShallow((state) => ({
+			user: state.user,
+		}))
+	);
+
 	const {
 		removeFromCart,
-		user,
 		removeFromWishlist,
 		addToWishlist,
 		addToCart,
 		updateQuantity,
 		AddedToWishlist,
-	} = useStore(
+	} = useDataStore(
 		useShallow((state) => ({
 			removeFromCart: state.removeFromCart,
-			user: state.user,
 			removeFromWishlist: state.removeFromWishlist,
 			addToCart: state.addToCart,
 			addToWishlist: state.addToWishlist,

@@ -31,8 +31,8 @@ function MyApp({
 	);
 
 	useMount(() => {
-		setLoader('loading');
 		try {
+			setLoader('loading');
 			const authenticateUser = async () => {
 				await checkAuthentication();
 				setLoader('done');

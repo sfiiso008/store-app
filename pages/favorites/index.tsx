@@ -1,7 +1,7 @@
 import React from 'react';
 import { useShallow } from 'zustand/react/shallow';
 // @store
-import { useStore } from '@/store/session';
+import { useStore, useDataStore } from '@/store/session';
 // @mui
 import { Typography, Stack, Card, Button } from '@mui/material';
 // @types
@@ -10,9 +10,14 @@ import { CartItems } from '@/store/types';
 import CartItem from '@/components/cart-item';
 
 const Favorites = () => {
-	const { user, getWishlist } = useStore(
+	const { user } = useStore(
 		useShallow((state) => ({
 			user: state.user,
+		}))
+	);
+
+	const { getWishlist } = useDataStore(
+		useShallow((state) => ({
 			getWishlist: state.getWishlist,
 		}))
 	);

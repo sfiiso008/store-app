@@ -2,18 +2,23 @@
 import React from 'react';
 import { useShallow } from 'zustand/react/shallow';
 // @store
-import { useStore } from '@/store/session';
+import { useStore, useDataStore } from '@/store/session';
 // @mui
 import { Typography, Stack, Card, Button } from '@mui/material';
 // @components
 import CartItem from '@/components/cart-item';
 
 const Cart = () => {
-	const { cart, getTotal, user, getCart } = useStore(
+	const { user } = useStore(
+		useShallow((state) => ({
+			user: state.user,
+		}))
+	);
+
+	const { cart, getTotal, getCart } = useDataStore(
 		useShallow((state) => ({
 			cart: state.cart,
 			getTotal: state.getTotal,
-			user: state.user,
 			getCart: state.getCart,
 		}))
 	);
